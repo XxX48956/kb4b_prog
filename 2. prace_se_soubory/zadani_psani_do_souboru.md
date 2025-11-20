@@ -114,8 +114,3 @@ Např.:
 . . . | . 8 . | . 7 9
 ```
 
-
-
----
-
-*Ke generování textových souborů bylo využito AI.*
