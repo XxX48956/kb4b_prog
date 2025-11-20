@@ -1,0 +1,35 @@
+Robin: xxx
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: 
+Robin: & "C:/Program Files/Python313/python.exe" c:/Users/st025610/Downloads/kb4b_prog-1/Moje_Projekty/chatlog.py
+xxx: xxxxxx
+xxx: xxxxx
+xxx: xxxx
+xxx: xxxxxx
