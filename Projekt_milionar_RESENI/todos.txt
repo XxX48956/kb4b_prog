@@ -1,0 +1,29 @@
+authmenu
+    login
+        check username in txt
+        compare passwords
+
+        =>menu
+    register
+        inputs
+        create object
+        write in txt identifications
+
+        =>menu
+    exit
+
+
+menu
+    inicialization
+        from txt to objects
+    authmenu
+
+        stats
+            graphs
+            dataset analytics
+            user stats
+        winners
+            show users which got 15 right questions from txt
+        play
+
+        exit
