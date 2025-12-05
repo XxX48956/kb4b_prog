@@ -2,12 +2,17 @@
 exit = False
 users = []
 quizQuestionsPath = "Projekt_milionar_RESENI\files\quiz_questions.csv"
-
+authPath = "Projekt_milionar_RESENI\files\users.txt"
+winnersPath = "Projekt_milionar_RESENI\files\winners.txt"
 
 class User:
     def __init__(self, username, password):
         self.username = username
         self.password = password
+
+    def register_to_txt(self):
+        with open(authPath, "a", encoding="utf-8") as file:
+            file.write(f"{self.username}: {self.password}")
 
 
     def __del__(self):
@@ -31,9 +36,11 @@ def register():
     username = input("Enter your username: \n>:")
     password = input("Enter your password: \n>:")
     users.append(User(username, password))
+
     
-def registration_to_txt():
-    pass
+# def registration_to_txt(username, password):
+#     with open(authPath, "a", encoding="utf-8") as file:
+#         file.write(f"{username}: {password}")
 
 def auth():
     choice = authMenu()
