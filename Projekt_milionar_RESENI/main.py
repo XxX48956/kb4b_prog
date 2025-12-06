@@ -1,14 +1,23 @@
-exit = False
-users = []
-quizQuestionsPath = "Projekt_milionar_RESENI\files\quiz_questions.csv"
-authPath = "Projekt_milionar_RESENI\files\users.txt"
-winnersPath = "Projekt_milionar_RESENI\files\winners.txt"
+from milionar import auth
+import vars
+
+
+
+def auth_loop():
+
+    while not vars.EXIT:
+        user = auth()
+        if user: 
+            return user
+
+    return None
 
 def main():
-    while not exit:
-        print("Program běží...")
 
-main()  
+    user = auth_loop()
+
+    while not vars.EXIT:
+        print("Program běží...")
 
 
 
