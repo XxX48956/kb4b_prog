@@ -2,7 +2,7 @@ import vars
 from user import User
 
 
-def parse_credentials_line(line):
+def parse_credentials_line(line): # 2 parts from file line, split USERNAME, PASSWORD
     cleaned_line = line.strip()
     if not cleaned_line:
         return None  # Skip empty lines
@@ -13,10 +13,11 @@ def parse_credentials_line(line):
         return parts[0], parts[1]
 
     return None
+        
 
-def find_user_credentials_in_file(file_path, username, password):
+def find_user_credentials_in_file(path, username, password): # Authenticate User with TXT file
     try:
-        with open(file_path, "r", encoding="utf-8") as file:
+        with open(path, "r", encoding="utf-8") as file:
             for line in file:
                 credentials = parse_credentials_line(line)
                 
@@ -27,58 +28,83 @@ def find_user_credentials_in_file(file_path, username, password):
                         return True
         return False
     except FileNotFoundError:
-        print(f"Error: Auth File not found on path: {file_path}")
+        print(f"Error: Auth File not found on path: {path}")
         return False
 
-
-def find_user_in_object_list(username, password, user_list):
+def find_user_in_object_list(username, password, user_list): # Find adn return user object
     for user in user_list:
         # POUZE pokud třída User má atributy username a password
         if user.username == username and user.password == password:
             return user
     return None
 
-def check_for_quit_command(username_input, password_input):
-    if username_input.lower() == "q" or password_input.lower() == "q":
-        vars.EXIT = True
+def is_quiting(input): # Check for 'q' command
+    if input.lower() == "q":
         return True
     return False
 
 def get_login_input():
     print("\nLogin: (Enter 'q' to quit)")
+
     username = input("Enter your username: \n>:").strip()
+    if is_quiting(username): 
+        return "exit"
+
     password = input("Enter your password: \n>:").strip()
+    if is_quiting(password):
+        return "exit"
 
     return username, password
 
+def authentization_login_loop():
+    while True:
+        # --- 1 ---
+        inputs = get_login_input()
+        
+        # --- 2 ---
+        if inputs == "exit":
+            return None
+        
+        username, password = inputs
+        
+        # --- 3 ---
+        if not username or not password:
+            print("Error: Please enter both username and password.")
+
+        # --- 4 ---
+        is_authenticated = find_user_credentials_in_file(vars.AUTH_PATH, username, password)
+        if is_authenticated:
+            return username, password
+
+        # --- 5 ---
+        if not is_authenticated:
+            print("Error: Invalid username or password.")
 
 def login():
-    
     # 1. Získá vstupy.
-    # 2. Zkontroluje příkaz pro ukončení.
-    # 3. Ověří přihlašovací údaje ze souboru.
-    # 4. Vyhledá odpovídající objekt uživatele.
+    # 2. Zkontroluje přítomnost příkazu pro ukončení.
+    # 3. Ověří že byly zadány údaje
+    # 4. Ověří přihlašovací údaje ze souboru a určí stav (auth).
+    # 5. Zkontroluje stav
+    # 6. Najde odpovídající uživatelský objekt.
+    # 7. Zkontroluje a vrátí objekt
     
-    username, password = get_login_input()
+    credentials = authentization_login_loop()
+    if credentials:
+        username, password = credentials
+    else:
+        return None
     
-    if check_for_quit_command(username, password):
-        return None
-
-    if not username or not password:
-        print("Error: Please enter both username and password.")
-        return None
-
-    is_authenticated = find_user_credentials_in_file(vars.AUTH_PATH, username, password)
-    
-    if not is_authenticated:
-        print("Error: Invalid username or password.")
-        return None
-
+    # --- 6 ---
     user_object = find_user_in_object_list(username, password, vars.USERS)
-        
+    
+    # --- 7 ---
     if user_object:
         print(f"Welcome back, {user_object.username}!")
         return user_object
     else: 
         print("Error: User object not found.")
         return None
+
+
+

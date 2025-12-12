@@ -1,4 +1,4 @@
-from vars import USERS
+from vars import USERS, AUTH_PATH
 from user import User
 
 
