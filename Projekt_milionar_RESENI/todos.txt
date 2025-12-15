@@ -1,18 +1,3 @@
-authmenu
-    login
-        check username in txt
-        compare passwords
-
-        =>menu
-    register
-        inputs
-        create object
-        write in txt identifications
-
-        =>menu
-    exit
-
-
 menu
     inicialization
         from txt to objects
@@ -27,3 +12,5 @@ menu
         play
 
         exit
+
+* hvězdička přede jméno za každnou výhru (do leaderboardu, do welcome)
