@@ -1,4 +1,4 @@
-from vars import QUIZ_QUESTIONS_PATH
+from vars import QUIZ_QUESTIONS_PATH, WINNERS_PATH
 import csv
 import random
     
@@ -9,9 +9,6 @@ def game_loop(user):
 
     game = Game(user)
     game.play()
-
-
-
 
 
 def get_valid_choice(min_value, max_value):
@@ -27,6 +24,29 @@ def get_valid_choice(min_value, max_value):
         except ValueError:
             print(f"Invalid input. Choose number from {min_value} to {max_value}.")
 
+
+def update_winner_stats(user):
+    winners_data = {}
+
+    with open(WINNERS_PATH, "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+            if "," in line:
+                username, wins = line.split(",")
+                winners_data[username] = int(wins)
+
+    if user.username in winners_data:
+        winners_data[user.username] += 1
+    else:
+        winners_data[user.username] = 1
+
+    user.wins += 1
+
+    with open(WINNERS_PATH, "w", encoding="utf-8") as file:
+        for name, win_count in winners_data.items():
+            file.write(f"{name},{win_count}\n")
+
+
 class Question:
     def __init__(self, data):
         self.question_text = data["question"]
@@ -35,7 +55,7 @@ class Question:
 
 
 class Game:
-    QUESTION_COUNT = 15
+    QUESTION_COUNT = 3
     DIFFICULTY_LEVELS = ["easy", "medium", "hard"]
     QUESTIONS_PER_LEVEL = round(QUESTION_COUNT / len(DIFFICULTY_LEVELS))
     HINTS_AVAILABLE = ["Call a friend", "Public opinion", "50/50"]
@@ -44,12 +64,14 @@ class Game:
 
     def __init__(self, user):
         self.user = user
-        self.current_level_index = -1
+        self.current_level_index = 0
         self.correct_answers = 0
         self.hints = self.HINTS_AVAILABLE
 
+
     def current_difficulty(self):
         return self.DIFFICULTY_LEVELS[self.current_level_index]
+
 
     def load_questions(self):
         try:
@@ -69,6 +91,7 @@ class Game:
             print(f"Error: An error occurred while reading the file '{QUIZ_QUESTIONS_PATH}'.")
             return []
 
+
     def get_random_question(self, questions):
         level_questions = [question for question in questions if question.difficulty == self.current_difficulty()]
         
@@ -78,13 +101,15 @@ class Game:
             
         return random.choice(level_questions)
 
+
     def update_difficulty(self):
-        if self.correct_answers % self.QUESTIONS_PER_LEVEL == 0 and self.current_level_index < len(self.DIFFICULTY_LEVELS) - 1:
-            self.current_level_index += 1
-            print(f"\n New difficulty: **{self.current_difficulty().upper()}**! ")
+        if self.correct_answers != 0 and self.correct_answers % self.QUESTIONS_PER_LEVEL == 0:
+            if self.current_level_index < len(self.DIFFICULTY_LEVELS) - 1:
+                self.current_level_index += 1
+                print(f"\n New difficulty: **{self.current_difficulty().upper()}**! ")
+
 
     def valid_response(self, response, correct_answer):
-
         if correct_answer == "true":
             if response.lower() in self.POSITIVE_RESPONSES:
                 return True
@@ -104,11 +129,14 @@ class Game:
     def call_a_friend(self):
         print(f"\nCall a friend? Sure… if you actually had a friend to call.")
 
+
     def public_opinion(self):
         print(f"\nPublic opinion? Great… too bad no one is listening.")
-    
+
+
     def fifty_fifty(self):
         print(f"\n50/50? Sure, a hint worthy of a strategy master.")
+
 
     def get_hint(self):
         print(f"\nAvailable hints: ")
@@ -148,7 +176,7 @@ class Game:
         print(f"\n--- Question number {self.correct_answers + 1} ({self.current_difficulty()}) ---")
         print(f"Question: {question.question_text}")
         
-        print(f"\nRemaining hints: {', '.join(self.hints) if self.hints else 'None'}")
+        print(f"\nRemaining hints: ['hint']\n\t{', '.join(self.hints) if self.hints else 'None'}")
         
         response = self.get_response()
         if response == "quit":
@@ -163,6 +191,7 @@ class Game:
             return None
             
         return is_correct
+
 
     def play(self):
         print("Game begins! Good luck!")
@@ -191,10 +220,7 @@ class Game:
             print(f"\n **Congratulation!**")
             print(f"You have answered all {self.QUESTION_COUNT} questions correctly and won the game!**")
 
-
-
-
-
+            update_winner_stats(self.user) # Update winner stats
 
 
 def display_rules():
@@ -202,7 +228,7 @@ def display_rules():
     print(f"You have to correctly answer {Game.QUESTION_COUNT} questions to win the game.")
     print(f"Every series of {Game.QUESTIONS_PER_LEVEL} questions will increase the difficulty.")
     print("You have just one chance: one wrong answer and game ends.")
-    print(f"You can also use {len(Game.HINTS_AVAILABLE)} hints: {", ".join(Game.HINTS_AVAILABLE)}.")
+    print(f"You can also use {len(Game.HINTS_AVAILABLE)} hints: {', '.join(Game.HINTS_AVAILABLE)}.")
     print()
 
 def display_hints():
@@ -246,3 +272,5 @@ def game_main_menu(user):
             break
         else:
             print("Error: Invalid choice.")
+
+
