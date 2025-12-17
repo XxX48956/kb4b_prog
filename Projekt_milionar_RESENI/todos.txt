@@ -14,3 +14,6 @@ menu
         exit
 
 * hvězdička přede jméno za každnou výhru (do leaderboardu, do welcome)
+* po vyhre pridat do souboru vyherce
+* grafy
+* upravit terminal

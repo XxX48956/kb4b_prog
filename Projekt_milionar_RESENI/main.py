@@ -1,7 +1,7 @@
 from auth import auth_loop
 from inicialization import recreate_user_objects
 import vars
-from game import game
+from game import game_main_menu
 
 def winners(WINNERS_PATH):
     with open(WINNERS_PATH, "r", encoding="utf-8") as file:
@@ -38,7 +38,7 @@ def main_menu(user):
             continue
 
         if choice == 1: # Hlavní hra
-            game(user)
+            game_main_menu(user)
         elif choice == 2: # Uživatelské statistiky
             stats()
         elif choice == 3: # Log výherců Hry
