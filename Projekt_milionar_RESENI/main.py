@@ -1,24 +1,9 @@
 from auth import auth_loop
 from inicialization import recreate_user_objects
-import vars
+from vars import WINNERS_PATH, AUTH_PATH
 from game import game_main_menu
+from winners import winners_log
 
-def winners(WINNERS_PATH):
-    with open(WINNERS_PATH, "r", encoding="utf-8") as file:
-        lines = file.readlines()
-        if not lines:
-            print("No winners yet.")
-            return None
-        cleaned_lines = [line.strip() for line in lines if line.strip("\n")]
-
-        for index, line in enumerate(cleaned_lines, start=1):
-            print(f"{index}. {line}")
-
-    return None
-
-
-def stats():
-    pass
 
 def main_menu(user):
     while True:
@@ -40,9 +25,9 @@ def main_menu(user):
         if choice == 1: # Hlavní hra
             game_main_menu(user)
         elif choice == 2: # Uživatelské statistiky
-            stats()
+            pass
         elif choice == 3: # Log výherců Hry
-            winners(vars.WINNERS_PATH)
+            winners_log(WINNERS_PATH)
         elif choice == 4: # Odhlášení se a zpět do Auth Menu
             print("Do you want to logout? [y/n]")
             confirmation = input(">:").lower()
@@ -53,7 +38,7 @@ def main_menu(user):
 
 def main():
     # Vytvoření objektů podle uživatelů v souboru (inicializace)
-    recreate_user_objects(vars.AUTH_PATH)
+    recreate_user_objects(AUTH_PATH)
     while True:
         # Atentizace uživatele login/register (vrací objekt uživatele)
         user = auth_loop()
@@ -71,14 +56,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-def game():
-    pass
-
-

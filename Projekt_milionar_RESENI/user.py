@@ -6,7 +6,8 @@ class User:
         self.games = 0 # Počet začatých her
         self.wins = 0 # Počet výher
 
-    
+    def win_rate(self):
+        return self.wins / self.games
 
-    def __del__(self): #Dodělat zápis dat z objektu do souboru
+    def __del__(self): # Dodělat zápis dat z objektu do souboru
         print(f"Objekt se jménem {self.username} byl smazán")

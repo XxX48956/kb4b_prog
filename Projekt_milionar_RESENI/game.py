@@ -1,4 +1,5 @@
 from vars import QUIZ_QUESTIONS_PATH, WINNERS_PATH
+from winners import update_winner_stats
 import csv
 import random
     
@@ -25,26 +26,6 @@ def get_valid_choice(min_value, max_value):
             print(f"Invalid input. Choose number from {min_value} to {max_value}.")
 
 
-def update_winner_stats(user):
-    winners_data = {}
-
-    with open(WINNERS_PATH, "r", encoding="utf-8") as file:
-        for line in file:
-            line = line.strip()
-            if "," in line:
-                username, wins = line.split(",")
-                winners_data[username] = int(wins)
-
-    if user.username in winners_data:
-        winners_data[user.username] += 1
-    else:
-        winners_data[user.username] = 1
-
-    user.wins += 1
-
-    with open(WINNERS_PATH, "w", encoding="utf-8") as file:
-        for name, win_count in winners_data.items():
-            file.write(f"{name},{win_count}\n")
 
 
 class Question:
