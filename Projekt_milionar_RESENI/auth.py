@@ -1,24 +1,32 @@
 from registration import register
 from login import login   
 
+EXIT_FLAG = "exit"
 
-def auth_menu():
-    print("User Authentication Menu")
-    
-    while 1:
+def get_menu_choice():
+    print("\n--- User Authentication Menu ---")    
+    while True:
         print("[1] Login")
         print("[2] Register")
-        print("[3] Exit")
+        print("[3] Save & Exit")
 
         try:
             choice = int(input(">:"))
-            return choice
-        except:
+            if 1 <= choice <= 3:
+                return choice
+            print("Invalid input. \nChoose number 1-3")
+        except ValueError:
           print("Invalid input. \nChoose number 1-3")
 
 
-def auth():
-    choice = auth_menu() # Vizuální menu pro input
+def confirm_exit():
+    print("\nWarning: If you exit now, the program will terminate.")
+    confirmation = input("Do you really want to exit? [y/N]: ").strip().lower()
+    return confirmation in ("y", "yes")
+
+
+def authenticate():
+    choice = get_menu_choice() # Vizuální menu pro input
 
     if choice == 1:
         return login() # Vrací objekt/None 
@@ -27,26 +35,20 @@ def auth():
         return register() # Vrací objekt/None
     
     elif choice == 3: # Ukončení programu
-        print("If you exit without authentization program will end.")
-        confirmation = input("Do you want to exit? [y/n] \n>:").lower()
-
-        if confirmation == "y" or confirmation == "yes":
-            return "exit"
-        else: 
-            return None
-    else:
-        print("Invalid choice. \nChoose in range 1-3")
+        if confirm_exit():
+            return EXIT_FLAG
     
     return None
 
 
 def auth_loop(): # Dokud není uživatel nebo 'exit' opakuj autentizaci  
     while True:
-        user = auth()
-        if user == "exit":
-            return
+        user = authenticate()
+        if user == EXIT_FLAG:
+            return None
         
         if user: 
             return user
 
     return None
+
