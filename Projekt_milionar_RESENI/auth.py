@@ -51,4 +51,3 @@ def auth_loop(): # Dokud není uživatel nebo 'exit' opakuj autentizaci
             return user
 
     return None
-
