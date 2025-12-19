@@ -20,24 +20,24 @@ def get_valid_choice(min_value, max_value):
 class Question:
     def __init__(self, data):
         self.question_text = data["question"]
-        self.correct_answer = data["correct_answer"].strip().lower
-        self.difficulty = data["difficulty"].strip().lower
+        self.correct_answer = data["correct_answer"].strip().lower()
+        self.difficulty = data["difficulty"].strip().lower()
 
 
 class Game:
     QUESTION_COUNT = 15
     DIFFICULTY_LEVELS = ["easy", "medium", "hard"]
-    QUESTIONS_PER_LEVEL = round(QUESTION_COUNT / len(DIFFICULTY_LEVELS))
+    QUESTIONS_PER_LEVEL = QUESTION_COUNT // len(DIFFICULTY_LEVELS)
     HINTS_AVAILABLE = ["Call a friend", "Public opinion", "50/50"]
     
-    POSITIVE_RESPONSES = ["y", "yes", "t", "true"]
-    NEGATIVE_RESPONSES = ["n", "no", "f", "false"]
+    POSITIVE_RESPONSES = ["y", "yes", "t", "true", "1"]
+    NEGATIVE_RESPONSES = ["n", "no", "f", "false", "0"]
 
     def __init__(self, user):
         self.user = user
         self.current_level_index = 0
         self.correct_answers = 0
-        self.hints = self.HINTS_AVAILABLE
+        self.hints = self.HINTS_AVAILABLE.copy()
 
 
     def current_difficulty(self):
@@ -109,7 +109,7 @@ class Game:
             if response in self.POSITIVE_RESPONSES or response in self.NEGATIVE_RESPONSES:
                 return response
             elif response == "hint":
-                self.get_hint()
+                self.use_hint()
             elif response == "quit":
                 return "quit"
             else:
@@ -122,7 +122,7 @@ class Game:
         
         print(f"\nRemaining hints: ['hint']\n\t{', '.join(self.hints) if self.hints else 'None'}")
         while True:
-            response = input("Your answer: [or 'hint' / 'quit']").strip().lower()
+            response = input("Your answer: [or 'hint' / 'quit']\n>:").strip().lower()
 
             if response in ['quit', 'q', 'exit', 'e']:
                 return False
@@ -139,6 +139,10 @@ class Game:
                 if is_correct:
                     print("Correct answer.")
                     self.user.correct_answers += 1
+                    if self.current_difficulty() not in self.user.correct_answers_per_difficulty:
+                        self.user.correct_answers_per_difficulty[self.current_difficulty()] = 0
+                    else:
+                        self.user.correct_answers_per_difficulty[self.current_difficulty()] += 1
                     return True
                 else:
                     print(f"Wrong answer. The correct answer is **{question.correct_answer}**.")
@@ -166,6 +170,7 @@ class Game:
 
             if self.ask_question(current_question): # Question check
                 self.correct_answers += 1
+
             else:
                 print(f"\n**GAME OVER!** Wrong answer. You got {self.correct_answers} correct answers.")
                 return
@@ -176,6 +181,7 @@ class Game:
 
             self.user.wins += 1
             update_winner_stats(self.user, WINNERS_PATH) # Update winner stats
+            return
 
 
 def game_introduction(user):
@@ -186,6 +192,7 @@ def game_introduction(user):
     print("You have only one chance, one wrong answer and its over.")
     print("Good luck!")
     print("\n")
+    input("Press Enter to continue...")
 
 
 def display_rules():
@@ -195,12 +202,17 @@ def display_rules():
     print("You have just one chance: one wrong answer and game ends.")
     print(f"You can also use {len(Game.HINTS_AVAILABLE)} hints: {', '.join(Game.HINTS_AVAILABLE)}.")
     print()
+    input("Press Enter to continue...")
+
 
 def display_hints():
     print("\nHints: ")
+    if not Game.HINTS_AVAILABLE:
+        print("None")
     for hint in Game.HINTS_AVAILABLE:
         print(f"- {hint}")
     print()
+    input("Press Enter to continue...")
 
 
 def game_main_menu(user):

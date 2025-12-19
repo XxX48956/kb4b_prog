@@ -1,56 +1,82 @@
 from auth import auth_loop
 from inicialization import recreate_user_objects
-from vars import WINNERS_PATH, AUTH_PATH
+from vars import WINNERS_PATH, AUTH_PATH, USERS_DATA_PATH
 from game import game_main_menu
 from winners import winners_log
+from save import save_user_stats
+from statistics import statistics
+    
 
-
-def main_menu(user):
+def get_valid_choice(min_value, max_value):
     while True:
-        print("Menu")
-        print(f"Logged as: {user.username}")
-        print("[1] Game")
-        print("[2] Stats")
-        print("[3] Winners")
-        print("[4] Logout")
-
         try:
-            print("Choose option [1-4]:")
-            choice = input(">:")
-            choice = int(choice)
+            print(f"Choose an option: [{min_value}-{max_value}]")
+            choice = int(input(">:"))
+            if min_value <= choice <= max_value:
+                return choice
+            else:
+                print(f"Invalid input. Choose number from {min_value} to {max_value}.")
         except ValueError:
-            print("Invalid input. Choose number from 1 to 4.")
-            continue
+            print(f"Invalid input. Choose number from {min_value} to {max_value}.")
 
-        if choice == 1: # Hlavní hra
+
+def main_menu(user, user_map):
+    while True:
+        print("\n" + "="*20)
+        print(f" LOGGED AS: {user.username} ")
+        print("="*20)
+        print("[1] Play Game")
+        print("[2] Statistics")
+        print("[3] Show Winners")
+        print("[4] Save Progress")
+        print("[5] Logout")
+
+        choice = get_valid_choice(1, 5)
+
+        if choice == 1:
             game_main_menu(user)
-        elif choice == 2: # Uživatelské statistiky
-            pass
-        elif choice == 3: # Log výherců Hry
+
+        elif choice == 2:
+            statistics(user_map, user) 
+        
+        elif choice == 3:
             winners_log(WINNERS_PATH)
-        elif choice == 4: # Odhlášení se a zpět do Auth Menu
+            input("\nPress Enter to return to menu...")
+        
+        elif choice == 4:
+            save_user_stats(user_map)
+            print("Progress saved.")
+            input("\nPress Enter to return to menu...")
+
+        elif choice == 5:
             print("Do you want to logout? [y/n]")
-            confirmation = input(">:").lower()
-            if confirmation == "y" or confirmation == "yes":
+            confirmation = input(">:").strip().lower()
+            if confirmation in ("y", "yes", "j", "jo", "jop", "a", "ano"):
                 print(f"User {user.username} logged out.")
                 return None
+        
+        else:
+            print("Invalid choice, please try again.")
 
 
 def main():
-    # Vytvoření objektů podle uživatelů v souboru (inicializace)
-    recreate_user_objects(AUTH_PATH)
-    while True:
-        # Atentizace uživatele login/register (vrací objekt uživatele)
-        user = auth_loop()
+    # Inicializace and object dict.
+    user_map = recreate_user_objects(AUTH_PATH, USERS_DATA_PATH)
 
-        # Jestli není přihlášen uživatel ukonči program
+    while True:
+        # Authentization (Login/Register).
+        user = auth_loop(user_map)
+
+        # Not logged user ends the game.
         if not user: 
-            print("Game ending")
+            print("\nGame ending...")
             break
         
-        # Hlavní menu hry
-        main_menu(user)
+        # Main Menu
+        main_menu(user, user_map)
 
+    # Save user statistics.
+    save_user_stats(user_map)
     print("Goodbye")
 
 

@@ -1,6 +1,7 @@
 from registration import register
 from login import login   
 
+
 EXIT_FLAG = "exit"
 
 def get_menu_choice():
@@ -21,18 +22,18 @@ def get_menu_choice():
 
 def confirm_exit():
     print("\nWarning: If you exit now, the program will terminate.")
-    confirmation = input("Do you really want to exit? [y/N]: ").strip().lower()
+    confirmation = input("Do you really want to exit? [y/n]: ").strip().lower()
     return confirmation in ("y", "yes")
 
 
-def authenticate():
+def authenticate(user_map):
     choice = get_menu_choice() # Vizuální menu pro input
 
     if choice == 1:
-        return login() # Vrací objekt/None 
+        return login(user_map) # Vrací objekt/None 
     
     elif choice == 2:
-        return register() # Vrací objekt/None
+        return register(user_map) # Vrací objekt/None
     
     elif choice == 3: # Ukončení programu
         if confirm_exit():
@@ -41,9 +42,9 @@ def authenticate():
     return None
 
 
-def auth_loop(): # Dokud není uživatel nebo 'exit' opakuj autentizaci  
+def auth_loop(user_map): # Dokud není uživatel nebo 'exit' opakuj autentizaci  
     while True:
-        user = authenticate()
+        user = authenticate(user_map)
         if user == EXIT_FLAG:
             return None
         

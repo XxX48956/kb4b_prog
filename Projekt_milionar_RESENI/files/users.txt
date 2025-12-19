@@ -1,1 +1,3 @@
-Adam: Ondra
+Robin: 1234
+admin: admin
+User: password

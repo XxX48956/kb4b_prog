@@ -1,4 +1,4 @@
-import vars
+from vars import AUTH_PATH
 from user import User
 
 
@@ -15,7 +15,7 @@ def parse_credentials_line(line): # 2 parts from file line, split USERNAME, PASS
     return None
         
 
-def find_user_credentials_in_file(path, username, password): # Authenticate User with TXT file
+def find_user_credentials_in_file(username, password, path = AUTH_PATH): # Authenticate User with TXT file
     try:
         with open(path, "r", encoding="utf-8") as file:
             for line in file:
@@ -31,17 +31,16 @@ def find_user_credentials_in_file(path, username, password): # Authenticate User
         print(f"Error: Auth File not found on path: {path}")
         return False
 
-def find_user_in_object_list(username, password, user_list): # Find adn return user object
-    for user in user_list:
-        # POUZE pokud třída User má atributy username a password
-        if user.username == username and user.password == password:
-            return user
+
+def find_user_in_object_list(username, password, user_map): # Find adn return user object
+    if username in user_map and user_map[username].password == password:
+        return user_map[username]
     return None
 
+
 def is_quiting(input): # Check for 'q' command
-    if input.lower() == "q":
-        return True
-    return False
+    return input.strip().lower() in ("q", "quit", "e", "exit")
+
 
 def get_login_input():
     print("\nLogin: (Enter 'q' to quit)")
@@ -55,6 +54,7 @@ def get_login_input():
         return "exit"
 
     return username, password
+
 
 def authentization_login_loop():
     while True:
@@ -72,7 +72,7 @@ def authentization_login_loop():
             print("Error: Please enter both username and password.")
 
         # --- 4 ---
-        is_authenticated = find_user_credentials_in_file(vars.AUTH_PATH, username, password)
+        is_authenticated = find_user_credentials_in_file(username, password, AUTH_PATH)
         if is_authenticated:
             return username, password
 
@@ -80,7 +80,8 @@ def authentization_login_loop():
         if not is_authenticated:
             print("Error: Invalid username or password.")
 
-def login():
+
+def login(user_map):
     # 1. Získá vstupy.
     # 2. Zkontroluje přítomnost příkazu pro ukončení.
     # 3. Ověří že byly zadány údaje
@@ -96,7 +97,7 @@ def login():
         return None
     
     # --- 6 ---
-    user_object = find_user_in_object_list(username, password, vars.USERS)
+    user_object = find_user_in_object_list(username, password, user_map)
     
     # --- 7 ---
     if user_object:
@@ -105,6 +106,3 @@ def login():
     else: 
         print("Error: User object not found.")
         return None
-
-
-
