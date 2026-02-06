@@ -30,9 +30,6 @@ with open("data/bmi.csv", "r", encoding="utf-8") as file:
 
 
 # ---------- Rozdělení na trénování a testování ----------
-rows = len(X)
-split = round(0.8 * rows)
-
 trening_X, test_X, trening_Y, test_Y  = train_test_split(
         X, Y,
         test_size=0.2,
