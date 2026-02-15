@@ -1,12 +1,11 @@
-# Neuronová síť predikující BMI kategorii
-# Jedná se pouze o učební ukázku - pro BMi je jinak využití neuronky nevhodné
-
 import csv
 
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
+
+from sklearn.preprocessing import StandardScaler
 
 # ---------- Načtení CSV a úprava dat ----------
 X = []  # = vstupy
@@ -27,7 +26,7 @@ with open(path, "r", encoding="utf-8") as file:
         chlorides = float(row["chlorides"])
         free_sulfur_dioxide = float(row["free sulfur dioxide"])
         total_sulfur_dioxide = float(row["total sulfur dioxide"])
-        density = float(row["total sulfur dioxide"])
+        density = float(row["density"])
         pH = float(row["pH"])
         sulphates = float(row["sulphates"])
         alcohol = float(row["alcohol"])
@@ -40,22 +39,31 @@ with open(path, "r", encoding="utf-8") as file:
 
 
 # ---------- Rozdělení na trénování a testování ----------
-trening_X, test_X, trening_Y, test_Y  = train_test_split(
-        X, Y,
-        test_size=0.2,
-        random_state=42)
-
-# ---------- Neuronová síť ----------
-neural_network = MLPClassifier(
-    # hidden_layer_sizes=(16, 32, 64, 8, 128),
-    hidden_layer_sizes=(8, 4),
-    activation="relu",
-    max_iter=2000,
-    verbose=False,
-    random_state=4,
-    solver="adam",
-    n_iter_no_change=30,
+trening_X, test_X, trening_Y, test_Y = train_test_split(
+    X, Y,
+    test_size=0.2,
+    random_state=42,
+    stratify=Y
 )
+scaler = StandardScaler()
+
+trening_X = scaler.fit_transform(trening_X)
+test_X = scaler.transform(test_X)
+
+neural_network = MLPClassifier(
+    hidden_layer_sizes=(128, 85, 134),
+    activation='relu',
+    solver='adam',
+    alpha=0.0001,
+    learning_rate_init=0.001,
+    max_iter=2000,
+    early_stopping=True,
+    n_iter_no_change=20,
+    random_state=42
+)
+
+
+
 
 neural_network.fit(trening_X, trening_Y)
 
@@ -73,3 +81,4 @@ print("Přesnost:", correct / len(results))
 ConfusionMatrixDisplay.from_predictions(
     test_Y, results)
 plt.show()
+
